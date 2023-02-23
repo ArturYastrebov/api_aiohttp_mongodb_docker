@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Register</title>
+  </head>
+  <body>
+    <h1>Register</h1>
+    <form method="POST" action="/registration">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username">
+      <br>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password">
+      <br>
+      <label for="password">Repeat your password:</label>
+      <input type="password" id="password2" name="password2">
+      <br>
+      <button type="submit">Register</button>
+    </form>
+        <form method="GET" action="/">
+           <button type="submit">Return</button>
+        </form>
+   <p style="color: red;">
+  <br> {error}
+  </p>
+  </body>
+</html>

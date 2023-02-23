@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Short url</title>
+  </head>
+  <body>
+    <h1>Short url</h1>
+    <a href="/forget">Log me out</a><br /><br />
+      <form method="POST" action="/short_url">
+      <label for="data_url">Take url:</label>
+      <input type="text" id="data_url" name="data_url">
+      <br>
+      <button type="submit">Do short</button>
+    </form>
+    <br> {short_url}
+  <p style="color: red;">
+      {error}
+  </p>
+  </body>
+</html>

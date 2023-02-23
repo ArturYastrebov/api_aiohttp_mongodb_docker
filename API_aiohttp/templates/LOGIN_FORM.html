@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Log in</title>
+  </head>
+  <body>
+    <h1>Log in</h1>
+    <form method="POST" action="/login">
+      <label for="username_login">Username:</label>
+      <input type="text" id="username_login" name="username">
+      <br>
+      <label for="password_login">Password:</label>
+      <input type="password" id="password_login" name="password">
+      <br>
+      <button type="submit">Log in</button>
+    </form>
+    <form method="GET" action="/">
+      <button type="submit">Return</button>
+    </form>
+    <p style="color: red;">
+  <br> {error}
+  </p>
+  </body>
+</html>

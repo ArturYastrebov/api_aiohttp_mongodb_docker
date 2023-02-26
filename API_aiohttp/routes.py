@@ -1,3 +1,5 @@
+import os
+
 import aiohttp_security
 import aiohttp_session
 import bcrypt
@@ -6,6 +8,7 @@ from aiohttp_security import is_anonymous, forget, remember, check_permission
 
 from API_aiohttp.db import users_collection
 from API_aiohttp.utility import get_short_url, logger
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 async def main_form(request: web.Request) -> web.Response:
@@ -15,7 +18,7 @@ async def main_form(request: web.Request) -> web.Response:
     session = await aiohttp_session.get_session(request)
     user = session.get('AIOHTTP_SECURITY', 'Anonim')
     is_logged = not await is_anonymous(request)
-    with open('templates/MAIN_FORM.html') as f:
+    with open(BASE_DIR + '/templates/MAIN_FORM.html') as f:
         content = f.read()
     return web.Response(text=content.format(
         logged='' if is_logged else 'NOT',
@@ -27,7 +30,7 @@ async def login_form(request: web.Request) -> web.Response:
     """
     Handle get requests to '/login' endpoint.
     """
-    with open('templates/LOGIN_FORM.html') as f:
+    with open(BASE_DIR + '/templates/LOGIN_FORM.html') as f:
         content = f.read()
     return web.Response(content_type='text/html', text=content.format(
         error='',
@@ -41,7 +44,7 @@ async def forget_action(request: web.Request):
     user = session.get('AIOHTTP_SECURITY', 'Anonim')
     redirect_response = web.HTTPFound('/')
     await forget(request, redirect_response)
-    logger.info(f'User remember on session. Nickname: {user}')
+    logger.info(f'User forget on session. Nickname: {user}')
     raise redirect_response
 
 async def handler_login(request: web.Request) -> web.Response:
@@ -61,7 +64,7 @@ async def handler_login(request: web.Request) -> web.Response:
             raise redirect_response
     else:
         error_msg = 'User not found in DB'
-    with open('templates/LOGIN_FORM.html') as f:
+    with open(BASE_DIR + '/templates/LOGIN_FORM.html') as f:
         content = f.read()
     return web.Response(text=content.format(
         error=error_msg,
@@ -72,7 +75,7 @@ async def do_short_url_form(request: web.Request) -> web.Response:
     Handle get requests to '/short_url' endpoint.
     """
     await check_permission(request, 'do_short_url')
-    with open('templates/SHORT_URL_FORM.html') as f:
+    with open(BASE_DIR + '/templates/SHORT_URL_FORM.html') as f:
         content = f.read()
     return web.Response(content_type='text/html', text=content.format(
         short_url='',
@@ -88,7 +91,7 @@ async def handler_short_url(request: web.Request) -> web.Response:
     data_url = data['data_url']
     short_url = await get_short_url(data_url)
     logger.info('User try to get short_url link')
-    with open('templates/SHORT_URL_FORM.html') as f:
+    with open(BASE_DIR + '/templates/SHORT_URL_FORM.html') as f:
         content = f.read()
     return web.Response(text=content.format(
         short_url=f'{short_url}' if short_url != 'Error' else '',
@@ -100,7 +103,7 @@ async def registration_form(request: web.Request) -> web.Response:
     """
      Handle get requests to '/registration' endpoint.
      """
-    with open('templates/REGISTRATION_FORM.html') as f:
+    with open(BASE_DIR + '/templates/REGISTRATION_FORM.html') as f:
         content = f.read()
     return web.Response(content_type='text/html', text=content.format(
         error='',
@@ -126,7 +129,7 @@ async def handle_registration(request: web.Request) -> web.Response:
         await remember(request, redirect_response, identity=username)
         logger.info(f'User remember on session. Nickname: {username}')
         raise redirect_response
-    with open('templates/REGISTRATION_FORM.html') as f:
+    with open(BASE_DIR + '/templates/REGISTRATION_FORM.html') as f:
         content = f.read()
     return web.Response(text=content.format(
         error=error,

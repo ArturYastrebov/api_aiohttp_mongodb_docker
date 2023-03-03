@@ -31,42 +31,44 @@ async def client(aiohttp_client):
     return aiohttp_client(app)
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def user_create(request: web.Request):
     salt = bcrypt.gensalt()
-    rehashed_password = bcrypt.hashpw('test_hashed_password'.encode('utf-8'), salt)
-    user = {"name": 'test_user_name', 'salt': salt, "password": rehashed_password}
+    rehashed_password = bcrypt.hashpw("test_hashed_password".encode("utf-8"), salt)
+    user = {"name": "test_user_name", "salt": salt, "password": rehashed_password}
     users_collection.insert_one(user)
-    remember(request, web.HTTPFound('/'), identity=user['name'])
+    remember(request, web.HTTPFound("/"), identity=user["name"])
     yield user
-    forget(request, web.HTTPFound('/'))
-    users_collection.delete_one({'name': user['name']})
+    forget(request, web.HTTPFound("/"))
+    users_collection.delete_one({"name": user["name"]})
+
 
 @pytest_asyncio.fixture
 async def session_create(client):
     client = await client
-    username, password = 'test_user_name', 'test_hashed_password'
-    data = {
-        'username': username,
-        'password': password
-    }
-    await client.post('/login', data=data)
+    username, password = "test_user_name", "test_hashed_password"
+    data = {"username": username, "password": password}
+    await client.post("/login", data=data)
 
 
 data_registrations = [
-    ('new_user_name', 'wrong_pass', 'test_hashed_password',
-     'id="error_registration">Your passwords are not the same'),
-    ('test_user_name', 'test_hashed_password', 'test_hashed_password',
-     'id="error_registration">The database already has such a nickname'),
-    ('new_user_name', 'test_hashed_password', 'test_hashed_password', '<title>Short url</title>'),
+    ("new_user_name", "wrong_pass", "test_hashed_password", 'id="error_registration">Your passwords are not the same'),
+    (
+        "test_user_name",
+        "test_hashed_password",
+        "test_hashed_password",
+        'id="error_registration">The database already has such a nickname',
+    ),
+    ("new_user_name", "test_hashed_password", "test_hashed_password", "<title>Short url</title>"),
 ]
+
 
 def func_ids(some_datas):
     # return f'{some_data[0]} + {some_data[1]} == {some_data[2]}'
     return [some_data[3] for some_data in some_datas]
+
+
 @pytest.fixture(params=data_registrations, ids=func_ids(data_registrations))
 def create_registration_data(request, user_create):
     yield request.param
-    users_collection.delete_one({'name': request.param[0]})
-
-
+    users_collection.delete_one({"name": request.param[0]})

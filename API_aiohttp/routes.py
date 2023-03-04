@@ -4,11 +4,12 @@ import bcrypt
 from aiohttp import web
 from aiohttp_security import is_anonymous, forget, remember, check_permission
 from API_aiohttp.db import users_collection
-from API_aiohttp.utility import get_short_url, logger
+from API_aiohttp.utility import get_short_url, logger, limiter
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
+@limiter.limit("5/minutes")
 async def get_homepage(request: web.Request) -> web.Response:
     session = await aiohttp_session.get_session(request)
     user = session.get("AIOHTTP_SECURITY", "Anonim")
@@ -21,6 +22,7 @@ async def get_homepage(request: web.Request) -> web.Response:
     )
 
 
+@limiter.limit("5/minutes")
 async def get_login_page(request: web.Request) -> web.Response:
     with open(BASE_DIR + "/templates/LOGIN_FORM.html") as f:
         content = f.read()
@@ -32,6 +34,7 @@ async def get_login_page(request: web.Request) -> web.Response:
     )
 
 
+@limiter.limit("5/minutes")
 async def get_forgotten_user(request: web.Request):
     session = await aiohttp_session.get_session(request)
     user = session.get("AIOHTTP_SECURITY", "Anonim")
@@ -41,6 +44,7 @@ async def get_forgotten_user(request: web.Request):
     raise redirect_response
 
 
+@limiter.limit("5/minutes")
 async def post_login_handler(request: web.Request) -> web.Response:
     data = await request.post()
     user = await users_collection.find_one({"name": data["username"]})
@@ -65,6 +69,7 @@ async def post_login_handler(request: web.Request) -> web.Response:
     )
 
 
+@limiter.limit("5/minutes")
 async def get_short_url_page(request: web.Request) -> web.Response:
     await check_permission(request, "do_short_url")
     with open(BASE_DIR + "/templates/SHORT_URL_FORM.html") as f:
@@ -78,6 +83,7 @@ async def get_short_url_page(request: web.Request) -> web.Response:
     )
 
 
+@limiter.limit("5/minutes")
 async def post_short_url_handler(request: web.Request) -> web.Response:
     await check_permission(request, "do_short_url")
     data = await request.post()
@@ -95,6 +101,7 @@ async def post_short_url_handler(request: web.Request) -> web.Response:
     )
 
 
+@limiter.limit("5/minutes")
 async def get_registration_page(request: web.Request) -> web.Response:
     with open(BASE_DIR + "/templates/REGISTRATION_FORM.html") as f:
         content = f.read()
@@ -106,11 +113,14 @@ async def get_registration_page(request: web.Request) -> web.Response:
     )
 
 
+@limiter.limit("5/minutes")
 async def post_registration_handler(request: web.Request) -> web.Response:
     data = await request.post()
     username, password, confirm_password = data["username"], data["password"], data["confirm_password"]
     if await users_collection.find_one({"name": username}):
         error_message = "The database already has such a nickname. Change your nickname."
+    elif password == '':
+        error_message = "The password field cannot be empty"
     elif password != confirm_password:
         error_message = "Your passwords are not the same"
     else:

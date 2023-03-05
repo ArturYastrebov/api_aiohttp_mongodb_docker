@@ -4,7 +4,7 @@ COPY requirements.txt .
 
 RUN pip install aiohttp_security
 RUN pip install aiohttp-session
-RUN apt-get install build-essential
+RUN apt-get update && apt-get install -y build-essential
 RUN pip install -r requirements.txt
 COPY . .
 EXPOSE 8000

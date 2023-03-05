@@ -3,8 +3,8 @@ import aiohttp_session
 import bcrypt
 from aiohttp import web
 from aiohttp_security import is_anonymous, forget, remember, check_permission
-from API_aiohttp.db import users_collection
-from API_aiohttp.utility import get_short_url, limiter
+from APIaiohttp.db import users_collection
+from APIaiohttp.utility import get_short_url, limiter
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 

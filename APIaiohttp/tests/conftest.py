@@ -11,9 +11,9 @@ from aiohttp import web
 from aiohttp_session import session_middleware, SimpleCookieStorage
 from pytest_aiohttp.plugin import aiohttp_client
 
-from API_aiohttp.routes import setup_routes
-from API_aiohttp.db import users_collection
-from API_aiohttp.main import SimpleJack_AuthorizationPolicy
+from APIaiohttp.routes import setup_routes
+from APIaiohttp.db import users_collection
+from APIaiohttp.main import SimpleJack_AuthorizationPolicy
 
 
 @pytest.fixture(scope="session")

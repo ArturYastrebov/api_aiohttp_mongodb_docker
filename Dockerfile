@@ -12,4 +12,4 @@ EXPOSE 8000
 ENV MONGO_DB=DB_USERS
 ENV PYTHONUNBUFFERED=1
 
-CMD ["python", "API_aiohttp.main"]
+CMD ["python", "API_aiohttp/main.py"]

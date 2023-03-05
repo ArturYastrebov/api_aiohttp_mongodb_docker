@@ -1,19 +1,16 @@
 import asyncio
-import random
 
-import aiohttp_session
 import bcrypt
 import pytest_asyncio
-from aiohttp_security import setup as setup_security, SessionIdentityPolicy, remember, forget, is_anonymous
+from aiohttp_security import setup as setup_security, SessionIdentityPolicy, remember, forget
 
 import pytest
 from aiohttp import web
 from aiohttp_session import session_middleware, SimpleCookieStorage
-from pytest_aiohttp.plugin import aiohttp_client
 
-from APIaiohttp.routes import setup_routes
-from APIaiohttp.db import users_collection
-from APIaiohttp.main import SimpleJack_AuthorizationPolicy
+from routes import setup_routes
+from db import users_collection
+from main import SimpleJack_AuthorizationPolicy
 
 
 @pytest.fixture(scope="session")

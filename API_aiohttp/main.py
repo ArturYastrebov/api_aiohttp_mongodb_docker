@@ -32,6 +32,5 @@ async def make_app() -> web.Application:
 
 
 if __name__ == "__main__":
-    host = '0.0.0.0'
     port = int(os.environ.get('PORT', 8000))
-    web.run_app(make_app(), host=host, port=port)
+    web.run_app(make_app(), port=port)

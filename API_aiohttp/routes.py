@@ -48,7 +48,8 @@ async def get_forgotten_user(request: web.Request):
 async def post_login_handler(request: web.Request) -> web.Response:
     data = await request.post()
     user = await users_collection.find_one({"name": data["username"]})
-    if user:
+    print('user', user)
+    if user and user != '':
         entered_password = data["password"].encode("utf-8")
         rehashed_password = bcrypt.hashpw(entered_password, user["salt"])
         if user["password"] != rehashed_password:
@@ -119,8 +120,8 @@ async def post_registration_handler(request: web.Request) -> web.Response:
     username, password, confirm_password = data["username"], data["password"], data["confirm_password"]
     if await users_collection.find_one({"name": username}):
         error_message = "The database already has such a nickname. Change your nickname."
-    elif password == '':
-        error_message = "The password field cannot be empty"
+    elif password == '' or username == '':
+        error_message = "The field cannot be empty"
     elif password != confirm_password:
         error_message = "Your passwords are not the same"
     else:

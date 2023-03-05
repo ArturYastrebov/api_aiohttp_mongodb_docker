@@ -1,10 +1,11 @@
+import os
+
 from aiohttp import web
 from aiohttp_session import SimpleCookieStorage, session_middleware
 from aiohttp_security import setup as setup_security, SessionIdentityPolicy
 from aiohttp_security.abc import AbstractAuthorizationPolicy
 from API_aiohttp.db import users_collection
 from API_aiohttp.routes import setup_routes
-from aiohttplimiter import default_keyfunc, Limiter
 
 
 class SimpleJack_AuthorizationPolicy(AbstractAuthorizationPolicy):
@@ -31,4 +32,6 @@ async def make_app() -> web.Application:
 
 
 if __name__ == "__main__":
-    web.run_app(make_app(), port=8000)
+    host = '0.0.0.0'
+    port = int(os.environ.get('PORT', 8000))
+    web.run_app(make_app(), host=host, port=port)

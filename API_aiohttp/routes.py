@@ -4,7 +4,7 @@ import bcrypt
 from aiohttp import web
 from aiohttp_security import is_anonymous, forget, remember, check_permission
 from API_aiohttp.db import users_collection
-from API_aiohttp.utility import get_short_url, logger, limiter
+from API_aiohttp.utility import get_short_url, limiter
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -40,7 +40,6 @@ async def get_forgotten_user(request: web.Request):
     user = session.get("AIOHTTP_SECURITY", "Anonim")
     redirect_response = web.HTTPFound("/")
     await forget(request, redirect_response)
-    logger.info(f"User forget on session. Nickname: {user}")
     raise redirect_response
 
 
@@ -90,7 +89,6 @@ async def post_short_url_handler(request: web.Request) -> web.Response:
     data = await request.post()
     data_url = data["data_url"]
     short_url = await get_short_url(data_url)
-    logger.info("User try to get short_url link")
     with open(BASE_DIR + "/templates/SHORT_URL_FORM.html") as f:
         content = f.read()
     return web.Response(
@@ -129,10 +127,8 @@ async def post_registration_handler(request: web.Request) -> web.Response:
         hashed_password = bcrypt.hashpw(password.encode("utf-8"), salt)
         user = {"name": username, "salt": salt, "password": hashed_password}
         await users_collection.insert_one(user)
-        logger.info(f"Save to DB :{username}")
         redirect_response = web.HTTPFound("/short_url")
         await remember(request, redirect_response, identity=username)
-        logger.info(f"User remember on session. Nickname: {username}")
         raise redirect_response
     with open(BASE_DIR + "/templates/REGISTRATION_FORM.html") as f:
         content = f.read()

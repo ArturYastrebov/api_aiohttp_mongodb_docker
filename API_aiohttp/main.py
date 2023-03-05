@@ -22,7 +22,7 @@ class SimpleJack_AuthorizationPolicy(AbstractAuthorizationPolicy):
         return identity in user_names and permission in allowed_permissions
 
 
-async def make_app() -> web.Application:
+async def make_app(*args, **kwargs) -> web.Application:
     middleware = session_middleware(SimpleCookieStorage())
     app = web.Application(middlewares=[middleware])
     setup_routes(app)

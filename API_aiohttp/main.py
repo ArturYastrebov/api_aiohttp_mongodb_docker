@@ -33,4 +33,4 @@ async def make_app(*args, **kwargs) -> web.Application:
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 8000))
-    web.run_app(make_app(), port=port, access_log=None, print=None)
+    web.run_app(make_app(), port=port)
